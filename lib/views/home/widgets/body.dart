@@ -14,7 +14,10 @@ class NotesBody extends StatelessWidget {
       ),
       child: Column(
         children: [
-          CustomAppBar(),
+          CustomAppBar(
+            title: "Your Notes",
+            icon: Icons.search_outlined,
+          ),
           SizedBox(
             height: 16,
           ),
