@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
+        platform: TargetPlatform.iOS,
+        fontFamily: "Poppins"
       ),
       home: const HomeView(),
     );
