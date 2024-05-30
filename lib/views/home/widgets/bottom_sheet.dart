@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/cubits/addnote_cubit/cubit.dart';
+import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/views/home/widgets/button.dart';
 import 'package:notes_app/views/home/widgets/input_field.dart';
 
@@ -7,8 +10,27 @@ class BottomSheetModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      child: NoteForm(),
+    return BlocProvider(
+      create: (BuildContext context) => AddNoteCubit(),
+      child: BlocConsumer<AddNoteCubit, AddNotesStates>(
+        builder: (context, state) => const SingleChildScrollView(
+          child: NoteForm(),
+        ),
+        listener: (context, state) {
+          if (state is AddNotesFailedState) {
+            print("Failed ${state.msg}");
+          }
+
+          if (state is AddNotesSuccessState) {
+            Navigator.of(context).pop();
+          }
+
+          if(state is AddNotesLoadingState)
+          {
+            const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
@@ -54,13 +76,17 @@ class _NoteFormState extends State<NoteForm> {
           ),
           Button(
             title: "Add",
-            onPressed: ()
-            {
-              if(formKey.currentState!.validate())
-              {
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
                 formKey.currentState!.save();
-              } else
-              {
+                var noteModel = NoteModel(
+                  title: title!,
+                  subTitle: subTitle!,
+                  date: DateTime.now().toString(),
+                  color: Colors.blue.value,
+                );
+                BlocProvider.of<AddNoteCubit>(context).addNote(noteModel);
+              } else {
                 autovalidateMode = AutovalidateMode.always;
                 setState(() {});
               }
