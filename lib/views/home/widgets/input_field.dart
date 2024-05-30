@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/constants.dart';
 
 class InputField extends StatelessWidget {
-  const InputField({super.key, this.hint, this.maxLines = 1});
+  const InputField({super.key, this.hint, this.maxLines = 1, this.onSaved});
 
   final String? hint;
   final int? maxLines;
+
+  final void Function(String?)? onSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +17,19 @@ class InputField extends StatelessWidget {
         start: 16,
         end: 16,
       ),
-      child: TextField(
+      child: TextFormField(
         onTapOutside: (evt) {
           FocusManager.instance.primaryFocus?.unfocus();
         },
+        validator: (value)
+        {
+          if(value?.isEmpty ?? true)
+          {
+            return "Field is Required";
+          }
+          return null;
+        },
+        onSaved: onSaved,
         maxLines: maxLines,
         cursorColor: primaryColor,
         decoration: InputDecoration(
