@@ -16,7 +16,9 @@ class ListviewItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const EditNotesViewBody(),
+            builder: (context) => EditNotesViewBody(
+              note: model,
+            ),
           ),
         );
       },
