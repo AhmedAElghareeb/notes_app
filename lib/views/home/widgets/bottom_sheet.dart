@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/cubits/addnote_cubit/cubit.dart';
+import 'package:intl/intl.dart';
+import 'package:notes_app/cubits/addnote/cubit.dart';
+import 'package:notes_app/cubits/addnote/states.dart';
+import 'package:notes_app/cubits/notes/cubit.dart';
 import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/views/home/widgets/button.dart';
 import 'package:notes_app/views/home/widgets/input_field.dart';
@@ -13,21 +16,25 @@ class BottomSheetModal extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => AddNoteCubit(),
       child: BlocConsumer<AddNoteCubit, AddNotesStates>(
-        builder: (context, state) => const SingleChildScrollView(
-          child: NoteForm(),
+        builder: (context, state) => AbsorbPointer(
+          absorbing: state is AddNotesLoadingState,
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: const SingleChildScrollView(
+              child: NoteForm(),
+            ),
+          ),
         ),
         listener: (context, state) {
           if (state is AddNotesFailedState) {
-            print("Failed ${state.msg}");
+            debugPrint("Failed ${state.msg}");
           }
 
           if (state is AddNotesSuccessState) {
+            BlocProvider.of<NotesCubit>(context).getNotes();
             Navigator.of(context).pop();
-          }
-
-          if(state is AddNotesLoadingState)
-          {
-            const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -74,23 +81,43 @@ class _NoteFormState extends State<NoteForm> {
           const SizedBox(
             height: 16,
           ),
-          Button(
-            title: "Add",
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
-                var noteModel = NoteModel(
-                  title: title!,
-                  subTitle: subTitle!,
-                  date: DateTime.now().toString(),
-                  color: Colors.blue.value,
-                );
-                BlocProvider.of<AddNoteCubit>(context).addNote(noteModel);
-              } else {
-                autovalidateMode = AutovalidateMode.always;
-                setState(() {});
-              }
-            },
+          BlocBuilder<AddNoteCubit, AddNotesStates>(
+            builder: (context, state) => Button(
+              title: "Add",
+              isLoading: state is AddNotesLoadingState,
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
+                  var noteModel = NoteModel(
+                    title: title!,
+                    subTitle: subTitle!,
+                    date: DateFormat.yMMMEd().format(DateTime.now()),
+                    color: Colors.blue.value,
+                  );
+                  BlocProvider.of<AddNoteCubit>(context).addNote(noteModel);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        "Note Added Successfully...",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } else {
+                  autovalidateMode = AutovalidateMode.always;
+                  setState(() {});
+                }
+              },
+            ),
           ),
           const SizedBox(
             height: 16,

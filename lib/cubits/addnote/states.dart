@@ -1,4 +1,3 @@
-part of 'cubit.dart';
 
 class AddNotesStates {}
 

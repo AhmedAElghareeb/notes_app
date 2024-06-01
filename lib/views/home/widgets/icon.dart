@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 class CustomIcon extends StatelessWidget {
   const CustomIcon({
-    super.key, required this.icon,
+    super.key, required this.icon, required this.press,
   });
 
   final IconData icon;
+  final VoidCallback press;
 
 
 
@@ -18,7 +19,7 @@ class CustomIcon extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           color: Colors.white.withOpacity(0.05)),
       child: IconButton(
-        onPressed: () {},
+        onPressed: press,
         icon: Icon(
           icon,
           size: 28,

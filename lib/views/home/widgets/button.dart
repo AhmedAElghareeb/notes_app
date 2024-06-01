@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/constants.dart';
 
 class Button extends StatelessWidget {
-  const Button({super.key, this.title, this.onPressed});
+  const Button({super.key, this.title, this.onPressed, this.isLoading = false});
 
   final String? title;
   final VoidCallback? onPressed;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class Button extends StatelessWidget {
               double.infinity,
               50,
             )),
-        child: Text(
+        child: isLoading ? const CircularProgressIndicator() : Text(
           title!,
           style: const TextStyle(
             fontSize: 20,
