@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/constants.dart';
 import 'package:notes_app/cubits/notes/cubit.dart';
 import 'package:notes_app/models/note_model.dart';
-import 'package:notes_app/views/home/widgets/color_item.dart';
-import 'package:notes_app/views/home/widgets/color_item_list.dart';
 import 'package:notes_app/views/home/widgets/custom_appbar.dart';
 import 'package:notes_app/views/home/widgets/edit_note_colors_list.dart';
 import 'package:notes_app/views/home/widgets/input_field.dart';
